@@ -174,10 +174,11 @@ class CourseraExtractor(PlatformExtractor):
                             links = course.extract_links_from_quiz(
                                 lecture.id)
 
-                    elif typename == 'exam':
-                        if download_quizzes:
-                            links = course._extract_links_from_text(
-                                lecture.supplemental_text, 'exam')
+                    ### the following downloads the quiz but there is a bug to fix
+                    #elif typename == 'exam':
+                    #    if download_quizzes:
+                    #        links = course._extract_links_from_text(
+                    #            lecture.supplemental_text, 'exam')
 
                     elif typename == 'programming':
                         if download_quizzes:
