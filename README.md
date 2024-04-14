@@ -1,4 +1,4 @@
-# Coursera Downloader: Lso2's Bugfix & Expanded Fork
+# Coursera Downloader: Lso2's Bugfix & Expanded Cookies-based Fork
 
 <!-- FORK NOTES -->
 
