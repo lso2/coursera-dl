@@ -89,20 +89,15 @@ def random_string(length):
 
 # Taken from: https://wiki.python.org/moin/EscapingHtml
 # escape() and unescape() takes care of &, < and >.
-HTML_ESCAPE_TABLE = {
-    '"': "&quot;",
-    "'": "&apos;"
-}
-
-HTML_UNESCAPE_TABLE = dict((v, k) for k, v in HTML_ESCAPE_TABLE.items())
-
+import html5lib
+from html5lib.serializer import serialize
+from html5lib.treebuilders import getTreeBuilder
+import urllib.parse
 
 def unescape_html(s):
-    h = html_parser.HTMLParser()
-    s = h.unescape(s)
-    s = unquote_plus(s)
-    return unescape(s, HTML_UNESCAPE_TABLE)
-
+    parser = html5lib.HTMLParser(tree=getTreeBuilder("dom"))
+    dom = parser.parse(s)
+    return serialize(dom, encoding='unicode')
 
 def clean_filename(s, minimal_change=False):
     """
@@ -114,9 +109,7 @@ def clean_filename(s, minimal_change=False):
     """
 
     # First, deal with URL encoded strings
-    h = html_parser.HTMLParser()
-    s = h.unescape(s)
-    s = unquote_plus(s)
+    s = urllib.parse.unquote_plus(s)
 
     # Strip forbidden characters
     # https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247(v=vs.85).aspx

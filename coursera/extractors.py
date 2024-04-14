@@ -176,8 +176,8 @@ class CourseraExtractor(PlatformExtractor):
 
                     elif typename == 'exam':
                         if download_quizzes:
-                            links = course.extract_links_from_exam(
-                                lecture.id)
+                            links = course._extract_links_from_text(
+                                lecture.supplemental_text, 'exam')
 
                     elif typename == 'programming':
                         if download_quizzes:

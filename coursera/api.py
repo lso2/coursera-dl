@@ -18,9 +18,13 @@ from six import iterkeys, iteritems
 from six.moves.urllib_parse import quote_plus
 import attr
 
+import html5lib
+from html5lib.serializer import serialize
+from html5lib.treebuilders import getTreeBuilder
+
 from .utils import (BeautifulSoup, make_coursera_absolute_url,
                     extend_supplement_links, clean_url, clean_filename,
-                    is_debug_run, unescape_html)
+                    is_debug_run)
 from .network import get_reply, get_page, post_page_and_reply
 from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
@@ -315,11 +319,11 @@ class OnDemandCourseMaterialItemsV1(object):
         @rtype: OnDemandCourseMaterialItems
         """
 
-        dom = get_page(session, OPENCOURSE_ONDEMAND_COURSE_MATERIALS,
+        dom = get_page(session, OPENCOURSE_ONDEMAND_COURSE_MATERIALS_V2,
                        json=True,
                        class_name=course_name)
         return OnDemandCourseMaterialItemsV1(
-            dom['linked']['onDemandCourseMaterialItems.v1'])
+            dom['linked']['onDemandCourseMaterialItems.v2'])
 
     def get(self, lesson_id):
         """
@@ -637,17 +641,21 @@ class CourseraOnDemand(object):
         slugs = [element['slug'] for element in course_list]
         return slugs
 
-    def extract_links_from_exam(self, exam_id):
-        try:
-            session_id = self._get_exam_session_id(exam_id)
-            exam_json = self._get_exam_json(exam_id, session_id)
-            return self._convert_quiz_json_to_links(exam_json, 'exam')
-        except requests.exceptions.HTTPError as exception:
-            logging.error('Could not download exam %s: %s', exam_id, exception)
-            if is_debug_run():
-                logging.exception(
-                    'Could not download exam %s: %s', exam_id, exception)
-            return None
+
+    def _convert_quiz_json_to_links(self, quiz_json, typename):
+        links = []
+        for question in quiz_json['questions']:
+            for part in question['parts']:
+                if 'definition' in part and 'value' in part['definition']:
+                    try:
+                        # Unescape the HTML content using html5lib
+                        parser = html5lib.HTMLParser(tree=getTreeBuilder("dom"))
+                        dom = parser.parse(part['definition']['value'])
+                        question_text = serialize(dom, encoding='unicode')
+                        links.append(Link(question_text, typename))
+                    except (KeyError, TypeError):
+                        pass
+        return links
 
     def _get_notebook_folder(self, url, jupyterId, **kwargs):
 

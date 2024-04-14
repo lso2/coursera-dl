@@ -68,42 +68,20 @@ class AuthenticationFailed(BaseException):
     Raised if we cannot authenticate on Coursera's site.
     """
 
+from http.cookiejar import MozillaCookieJar
 
-def prepare_auth_headers(session, include_cauth=False):
-    """
-    This function prepares headers with CSRF/CAUTH tokens that can
-    be used in POST requests such as login/get_quiz.
+def prepare_auth_headers(session, include_cauth=True):
+    cj = MozillaCookieJar(filename='cookies.txt')
+    try:
+        cj.load(ignore_discard=True, ignore_expires=True)
+    except (IOError, OSError):
+        pass
 
-    @param session: Requests session.
-    @type session: requests.Session
-
-    @param include_cauth: Flag that indicates whether CAUTH cookies should be
-        included as well.
-    @type include_cauth: bool
-
-    @return: Dictionary of headers.
-    @rtype: dict
-    """
-
-    # csrftoken is simply a 20 char random string.
-    csrftoken = random_string(20)
-
-    # Now make a call to the authenticator url.
-    csrf2cookie = 'csrf2_token_%s' % random_string(8)
-    csrf2token = random_string(24)
-    cookie = "csrftoken=%s; %s=%s" % (csrftoken, csrf2cookie, csrf2token)
-
+    headers = {}
     if include_cauth:
-        CAUTH = session.cookies.get('CAUTH')
-        cookie = "CAUTH=%s; %s" % (CAUTH, cookie)
-
-    logging.debug('Forging cookie header: %s.', cookie)
-    headers = {
-        'Cookie': cookie,
-        'X-CSRFToken': csrftoken,
-        'X-CSRF2-Cookie': csrf2cookie,
-        'X-CSRF2-Token': csrf2token
-    }
+        cauth = next((cookie for cookie in cj if cookie.name == 'CAUTH'), None)
+        if cauth:
+            headers['CAUTH'] = cauth.value
 
     return headers
 
