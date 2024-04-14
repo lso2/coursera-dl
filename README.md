@@ -1,10 +1,20 @@
-# Coursera Downloader
+# Coursera Downloader: Lso2's Bugfix & Expanded Fork
 
-[![Build Status](https://travis-ci.org/coursera-dl/coursera-dl.svg?branch=master)](https://travis-ci.org/coursera-dl/coursera-dl)
+<!-- FORK NOTES -->
+
+This fork fixes a lot of issues with login specifically designed for the process of using cookies, especially because login with username and pass doesn't work. 
+
+This was tested and on both Windows and Ubuntu-based distros. What was fixed and updated were some problems with the authorization, including to allow to use the cookies.txt file. You will need to get the cookie (using a browser plugin) after logging into your coursera account, and then convert it to Netscape cookies. 
+
+Additionally, this version is expanded to download more course material, and was successful at doing so. The main version doesn't download the course materials even if you use the flags. However I'm still trying to fix a bug so that the exams can be downloaded.
+
+<!-- /FORK NOTES -->
+
+[![Build Status](https://travis-ci.org/lso2/coursera-dl.svg?branch=master)](https://travis-ci.org/lso2/coursera-dl)
 [![Build status](https://ci.appveyor.com/api/projects/status/3hru0ycv5fbny5k8/branch/master?svg=true)](https://ci.appveyor.com/project/balta2ar/coursera-dl/branch/master)
-[![Coverage Status](https://coveralls.io/repos/coursera-dl/coursera-dl/badge.svg)](https://coveralls.io/r/coursera-dl/coursera-dl)
+[![Coverage Status](https://coveralls.io/repos/lso2/coursera-dl/badge.svg)](https://coveralls.io/r/lso2/coursera-dl)
 [![Latest version on PyPI](https://img.shields.io/pypi/v/coursera-dl.svg)](https://pypi.python.org/pypi/coursera-dl)
-[![Code Climate](https://codeclimate.com/github/coursera-dl/coursera-dl/badges/gpa.svg)](https://codeclimate.com/github/coursera-dl/coursera-dl)
+<!-- [![Code Climate](https://codeclimate.com/github/lso2/coursera-dl/badges/gpa.svg)](https://codeclimate.com/github/lso2/coursera-dl) -->
 
 <!-- TOC -->
 
